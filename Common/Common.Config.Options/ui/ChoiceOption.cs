@@ -6,6 +6,9 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Harmony;
+	using Reflection;
+
 	partial class Options
 	{
 		partial class Factory
@@ -62,7 +65,7 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				int defaultIndex = values?.findIndex(val => val.Equals(cfgField.value) || val.Equals(cfgField.value.toInt())) ?? cfgField.value.toInt();
+				int defaultIndex = values?.findIndex(val => val.Equals(cfgField.value) || val.Equals(cfgField.value.convert<int>())) ?? cfgField.value.convert<int>();
 				options.AddChoiceOption(id, label, choices, defaultIndex < 0? 0: defaultIndex);
 			}
 

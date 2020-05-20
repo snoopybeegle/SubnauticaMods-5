@@ -2,6 +2,8 @@
 using System.Linq;
 
 using Common;
+using Common.Harmony;
+using Common.Reflection;
 using Common.Configuration;
 
 namespace DayNightSpeed
@@ -19,7 +21,7 @@ namespace DayNightSpeed
 
 		[Options.Field("Use additional multipliers")]
 		[Field.Action(typeof(SpeedsHider))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		public readonly bool useAuxSpeeds = false;
 
 		[Options.Field("Hunger/thrist", tooltipType: typeof(Tooltips.HungerThrist))]
@@ -28,22 +30,22 @@ namespace DayNightSpeed
 		public float auxSpeedHungerThrist => useAuxSpeeds? speedHungerThrist: 1.0f;
 
 		[Options.Field("Plants growth", tooltipType: typeof(Tooltips.Plants))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedPlantsGrow = 1.0f;
 
 		[Options.Field("Eggs hatching", tooltipType: typeof(Tooltips.Eggs))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedEggsHatching = 1.0f;
 
 		[Options.Field("Creatures growth", tooltipType: typeof(Tooltips.Creatures))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedCreaturesGrow = 1.0f;
 
 		[Options.Field("Medkit fabrication", tooltipType: typeof(Tooltips.Medkit))]
-		[Options.FinalizeAction(typeof(HarmonyHelper.UpdateOptionalPatches))]
+		[Options.FinalizeAction(typeof(UpdateOptionalPatches))]
 		[Slider_0_100][Range_001_100][HideableSpeed]
 		public readonly float speedMedkitInterval = 1.0f;
 
@@ -344,10 +346,10 @@ namespace DayNightSpeed
 				// using reflection to avoid copy/paste and keep new params readonly
 				foreach (var varName in new string[] { "HungerThrist", "PlantsGrow", "EggsHatching", "CreaturesGrow", "MedkitInterval" })
 				{
-					float val = GetType().field("mult" + varName).GetValue(this).toFloat();
+					float val = this.getFieldValue<float>("mult" + varName);
 
 					if (val != 1.0f)
-						GetType().field("speed" + varName).SetValue(this, 1.0f / val);
+						this.setFieldValue("speed" + varName, 1.0f / val);
 				}
 			}
 			catch (Exception e) { Log.msg(e); }
@@ -366,7 +368,7 @@ namespace DayNightSpeed
 			try
 			{
 				if (GetType().fields().Where(field => field.Name.StartsWith("speed") && !field.GetValue(this).Equals(1.0f)).Count() > 0)
-					GetType().field(nameof(useAuxSpeeds)).SetValue(this, true);
+					this.setFieldValue(nameof(useAuxSpeeds) , true);
 			}
 			catch (Exception e) { Log.msg(e); }
 		}

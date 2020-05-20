@@ -7,20 +7,20 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 
-using Common.Configuration;
-
-namespace Common
+namespace Common.Harmony
 {
+	using Reflection;
+	using Configuration;
+
 	using CIEnumerable = IEnumerable<CodeInstruction>;
 	using CIList = List<CodeInstruction>;
 
-	static partial class HarmonyHelper // additional transpilers stuff to work with config
+	class UpdateOptionalPatches: Config.Field.IAction { public void action() => OptionalPatches.update(); }
+
+	static partial class CIHelper // additional transpiler stuff to work with config
 	{
 		// for using in transpiler helper functions
 		static readonly MethodInfo mainConfig = typeof(Config).property(nameof(Config.main)).GetGetMethod();
-
-		public class UpdateOptionalPatches: Config.Field.IAction { public void action() => updateOptionalPatches(); }
-
 
 		// warning: nested classes are not supported for cfgVarName!
 

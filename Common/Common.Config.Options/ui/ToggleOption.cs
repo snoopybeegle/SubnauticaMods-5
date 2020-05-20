@@ -3,6 +3,8 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		partial class Factory
@@ -26,7 +28,7 @@ namespace Common.Configuration
 
 			public override void addOption(Options options)
 			{
-				options.AddToggleOption(id, label, cfgField.value.toBool());
+				options.AddToggleOption(id, label, cfgField.value.convert<bool>());
 			}
 
 			public override void onValueChange(EventArgs e)

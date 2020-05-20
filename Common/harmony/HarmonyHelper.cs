@@ -5,15 +5,17 @@ using System.Collections.Generic;
 
 using Harmony;
 
-namespace Common
+namespace Common.Harmony
 {
-	static partial class HarmonyHelper
+	using Reflection;
+
+	// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
+	public class PatchClassAttribute: Attribute {}
+
+	static class HarmonyHelper
 	{
 		public static HarmonyInstance harmonyInstance => _harmonyInstance ??= HarmonyInstance.Create(Mod.id);
 		static HarmonyInstance _harmonyInstance;
-
-		// is class have methods that can be used as harmony patches (for more: void patch(Type typeWithPatchMethods))
-		public class PatchClassAttribute: Attribute {}
 
 		public static void patchAll(bool searchForPatchClasses = false)
 		{
@@ -64,6 +66,8 @@ namespace Common
 			}
 		}
 
+		public static void unpatch(MethodBase original, MethodInfo patch) => harmonyInstance.Unpatch(original, patch);
+
 		public static Patches getPatchInfo(MethodBase method) => harmonyInstance.GetPatchInfo(method);
 
 
@@ -85,9 +89,12 @@ namespace Common
 
 		public static bool isPatchedBy(MethodBase original, string patchName) =>
 			isPatchedBy(original, ReflectionHelper.getCallingType().method(patchName));
+	}
 
 
-		static MethodBase getTargetMethod(this HarmonyMethod harmonyMethod)
+	static partial class HarmonyExtensions
+	{
+		public static MethodBase getTargetMethod(this HarmonyMethod harmonyMethod)
 		{
 			if (harmonyMethod.methodName != null)
 				return harmonyMethod.declaringType?.method(harmonyMethod.methodName, harmonyMethod.argumentTypes);

@@ -7,6 +7,8 @@ using SMLHelper.V2.Options;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Options
 	{
 		public static partial class Components
@@ -50,7 +52,7 @@ namespace Common.Configuration
 				// slider value will be saved exactly as formatted for display
 				public class ExactlyFormatted: ModSliderOption.SliderValue
 				{
-					public override float ConvertToDisplayValue(float value) => valueFormat.format(value).toFloat();
+					public override float ConvertToDisplayValue(float value) => valueFormat.format(value).convert<float>();
 				}
 
 				// displayed value is percent of the field's range (not slider's range)
@@ -70,8 +72,8 @@ namespace Common.Configuration
 						max = range.max;
 					}
 
-					static readonly ReflectionHelper.PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").propertyWrap("value");
-					static readonly ReflectionHelper.PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").propertyWrap("text");
+					static readonly PropertyWrapper sliderValue = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Slider").property("value").wrap();
+					static readonly PropertyWrapper text = ReflectionHelper.safeGetType("UnityEngine.UI", "UnityEngine.UI.Text").property("text").wrap();
 					object _slider, _label;
 
 					protected override void UpdateLabel()

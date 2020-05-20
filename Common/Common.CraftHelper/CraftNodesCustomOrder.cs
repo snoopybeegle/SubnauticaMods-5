@@ -3,6 +3,9 @@ using SMLHelper.V2.Handlers;
 
 namespace Common.Crafting
 {
+	using Harmony;
+	using Reflection;
+
 	static class TreeNodeExtension
 	{
 		public static TreeNode insertNode(this TreeNode parent, string idAfter, TreeNode child)

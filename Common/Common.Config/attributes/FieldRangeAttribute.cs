@@ -3,6 +3,8 @@ using System.Reflection;
 
 namespace Common.Configuration
 {
+	using Reflection;
+
 	partial class Config
 	{
 		public partial class Field
@@ -18,7 +20,7 @@ namespace Common.Configuration
 					this.max = max;
 				}
 
-				public object clamp(object value) => UnityEngine.Mathf.Clamp(value.toFloat(), min, max);
+				public object clamp(object value) => UnityEngine.Mathf.Clamp(value.convert<float>(), min, max);
 
 				public void process(object config, FieldInfo field)
 				{																									$"RangeAttribute.process min > max, field '{field.Name}'".logDbgError(min > max);

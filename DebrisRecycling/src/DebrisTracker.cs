@@ -4,6 +4,7 @@ using Harmony;
 using UnityEngine;
 
 using Common;
+using Common.Reflection;
 
 namespace DebrisRecycling
 {
@@ -61,7 +62,7 @@ namespace DebrisRecycling
 					toRemove.Add(info.Value);
 			}
 
-			var onResourceRemoved = typeof(ResourceTracker).eventWrap("onResourceRemoved"); // don't make it static
+			var onResourceRemoved = typeof(ResourceTracker).evnt("onResourceRemoved").wrap(); // don't make it static
 
 			foreach (var info in toRemove)
 			{
